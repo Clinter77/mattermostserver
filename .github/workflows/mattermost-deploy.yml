@@ -23,7 +23,7 @@ jobs:
         with:
           service: clinter77-mattermostserver
           image: mattermost/mattermost-team-edition
-          flags: --port=8065 --no-cpu-throttling
+          flags: --port=8065 --no-cpu-throttling --memory=1Gi
           env_vars: |
             MM_USERNAME=admin
             MM_PASSWORD=admin
