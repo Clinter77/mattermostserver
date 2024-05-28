@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Allow CI to write 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Login to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCLOUD_AUTH }}
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: clinter77-mattermostserver
+          image: mattermost/mattermost-team-edition
+          flags: --port=8065 --no-cpu-throttling
+          env_vars: |
+            MM_USERNAME=admin
+            MM_PASSWORD=admin
+            MM_DBNAME=dumortier
+            MM_SQLSETTINGS_DATASOURCE=postgres://dumortier:dumortier@35.239.186.51:5432/dumortier?sslmode=disable&connect_timeout=10

@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:13-alpine
+    image: postgres:15-alpine
     restart: unless-stopped
-    volumes:
-      - mattermost-db-data:/var/lib/postgresql/data
+    # volumes:
+    #   - mattermost-db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: dumortier
       POSTGRES_PASSWORD: dumortier
@@ -16,23 +16,27 @@ services:
     restart: unless-stopped
     ports:
       - "8065:8065"
-    volumes:
-      - mattermost-data:/mattermost/data
-      - ./config:/mattermost/config
+    # volumes:
+    #   - mattermost-data:/mattermost/data
+    #   - ./config:/mattermost/config
     environment:
-      MM_CONFIG: /mattermost/config/config.json
+      MM_USERNAME: dumortier
+      MM_PASSWORD: dumortier
+      MM_DBNAME: dumortier
+      MM_SQLSETTINGS_DATASOURCE: postgres://dumortier:dumortier@db:5432/dumortier?sslmode=disable&connect_timeout=10
+      # MM_CONFIG: /mattermost/config/config.json
     depends_on:
       - db
 
-  python-app:
-    build: .
-    depends_on:
-      - mattermost
-    environment:
-      MATTERMOST_URL: http://localhost:8065
-      MATTERMOST_LOGIN_ID: dumortier
-      MATTERMOST_PASSWORD: dumortier
-      MATTERMOST_CHANNEL_ID: dumortier
+  # python-app:
+  #   build: .
+  #   depends_on:
+  #     - mattermost
+  #   environment:
+  #     MATTERMOST_URL: http://localhost:8065
+  #     MATTERMOST_LOGIN_ID: dumortier
+  #     MATTERMOST_PASSWORD: dumortier
+  #     MATTERMOST_CHANNEL_ID: dumortier
 
 volumes:
   mattermost-db-data:
